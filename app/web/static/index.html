@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Agent — Boshqaruv paneli</title>
+  <meta name="description" content="Ijtimoiy tarmoqlarni avtomatik boshqaruvchi AI agent paneli">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="bg-orbs"><span></span><span></span><span></span></div>
+  <div class="bg-grid"></div>
+
+  <div class="app">
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo" data-icon="bot"></div>
+        <div>
+          <h1>Social Agent</h1>
+          <small>AI SMM menejer</small>
+        </div>
+      </div>
+
+      <nav class="nav" id="nav">
+        <button class="nav-item active" data-page="overview"><i data-icon="home"></i><span class="txt">Bosh sahifa</span></button>
+        <button class="nav-item" data-page="chats"><i data-icon="chat"></i><span class="txt">Chatlar</span></button>
+        <button class="nav-item" data-page="knowledge"><i data-icon="book"></i><span class="txt">Bilim bazasi</span></button>
+        <button class="nav-item" data-page="questions"><i data-icon="help"></i><span class="txt">Savollar</span><span class="badge hot" id="badge-questions"></span></button>
+        <button class="nav-item" data-page="approvals"><i data-icon="check"></i><span class="txt">Tasdiqlar</span><span class="badge hot" id="badge-approvals"></span></button>
+        <button class="nav-item" data-page="content"><i data-icon="megaphone"></i><span class="txt">Kontent</span></button>
+        <button class="nav-item" data-page="videos"><i data-icon="film"></i><span class="txt">Videolar</span></button>
+        <button class="nav-item" data-page="analytics"><i data-icon="chart"></i><span class="txt">Analitika</span></button>
+        <button class="nav-item" data-page="ads"><i data-icon="target"></i><span class="txt">Targetolog</span></button>
+        <button class="nav-item" data-page="playground"><i data-icon="sparkles"></i><span class="txt">Sinov</span></button>
+        <button class="nav-item" data-page="activity"><i data-icon="activity"></i><span class="txt">Faollik</span></button>
+        <button class="nav-item" data-page="settings"><i data-icon="settings"></i><span class="txt">Sozlamalar</span></button>
+      </nav>
+
+      <div class="agent-switch">
+        <div class="label"><b id="agent-state">Agent</b><span id="agent-state-sub">yuklanmoqda…</span></div>
+        <label class="toggle"><input type="checkbox" id="agent-toggle"><span></span></label>
+      </div>
+    </aside>
+
+    <!-- ================= MAIN ================= -->
+    <main class="main">
+
+      <!-- OVERVIEW -->
+      <section class="page active" id="page-overview">
+        <div class="page-head">
+          <div>
+            <h2>Salom 👋 <span class="gradient-text">Agent holati</span></h2>
+            <p>Agent nima qilayotgani va qaysi ishlar sizni kutayotgani</p>
+          </div>
+          <button class="btn" onclick="App.refresh()"><i data-icon="refresh"></i>Yangilash</button>
+        </div>
+        <div class="grid grid-4 mb" id="stats"></div>
+        <div class="grid grid-main">
+          <div class="card">
+            <h3><i data-icon="activity"></i>So'nggi faollik</h3>
+            <div class="feed" id="overview-feed"></div>
+          </div>
+          <div class="grid" style="align-content:start">
+            <div class="card">
+              <h3><i data-icon="plug"></i>Xizmatlar</h3>
+              <div id="services"></div>
+            </div>
+            <div class="card">
+              <h3><i data-icon="zap"></i>Tezkor amallar</h3>
+              <div class="grid" style="gap:10px">
+                <button class="btn" onclick="App.go('knowledge')"><i data-icon="upload"></i>Bazaga hujjat qo'shish</button>
+                <button class="btn" onclick="App.go('chats')"><i data-icon="chat"></i>Chatlarga ruxsat berish</button>
+                <button class="btn" onclick="App.go('content')"><i data-icon="megaphone"></i>Post tayyorlash</button>
+                <button class="btn" onclick="App.go('videos')"><i data-icon="film"></i>YouTube/Instagram video yasash</button>
+                <button class="btn" onclick="App.go('ads')"><i data-icon="target"></i>Targetolog reklama taklifi</button>
+                <button class="btn" onclick="App.go('playground')"><i data-icon="sparkles"></i>Agentni sinab ko'rish</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHATS -->
+      <section class="page" id="page-chats">
+        <div class="page-head">
+          <div>
+            <h2>Chatlar</h2>
+            <p>Agent faqat ruxsat berilgan chat, guruh va kanallarda ishlaydi</p>
+          </div>
+          <div class="tabs">
+            <button class="tab active" data-chat-tab="allowed">Ruxsat berilganlar</button>
+            <button class="tab" data-chat-tab="dialogs">Telegram dialoglari</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="row mb">
+            <input class="input grow" id="chat-search" placeholder="🔎 Qidirish…">
+            <select class="input" id="chat-kind" style="width:auto">
+              <option value="">Barchasi</option>
+              <option value="user">👤 Kontaktlar</option>
+              <option value="group">👥 Guruhlar</option>
+              <option value="channel">📢 Kanallar</option>
+              <option value="discussion">💬 Izohlar</option>
+            </select>
+          </div>
+          <div class="list" id="chat-list"></div>
+        </div>
+        <p class="muted mt" style="font-size:13px">
+          💡 <b>Rejim:</b> «Avto» — agent darhol javob beradi. «Tasdiq» — javob avval sizga tasdiqlash uchun keladi.
+          Kanalga ruxsat berganda uning izohlar guruhi ham avtomatik qo'shiladi.
+        </p>
+      </section>
+
+      <!-- KNOWLEDGE -->
+      <section class="page" id="page-knowledge">
+        <div class="page-head">
+          <div>
+            <h2>Bilim bazasi</h2>
+            <p>Agent faqat shu yerdagi ma'lumotlar asosida aniq faktlarni aytadi</p>
+          </div>
+        </div>
+        <div class="grid grid-2 mb">
+          <div class="card">
+            <h3><i data-icon="upload"></i>Fayl yuklash</h3>
+            <label class="dropzone" id="dropzone">
+              <input type="file" id="file-input" multiple hidden accept=".pdf,.docx,.txt,.md,.csv,.json,.html">
+              <i data-icon="cloud"></i>
+              <b>Fayllarni shu yerga tashlang</b>
+              <span>yoki tanlash uchun bosing · PDF, DOCX, TXT, MD, CSV</span>
+            </label>
+            <div class="row mt">
+              <input class="input grow" id="url-input" placeholder="https://sayt.uz/sahifa">
+              <button class="btn" id="url-btn"><i data-icon="link"></i>Saytdan olish</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3><i data-icon="edit"></i>Matn qo'shish</h3>
+            <div class="field"><input class="input" id="kb-title" placeholder="Sarlavha, masalan: Narxlar 2026"></div>
+            <div class="field"><textarea class="input" id="kb-text" rows="5" placeholder="Savol-javoblar, narxlar, manzil, ish vaqti, xizmatlar…"></textarea></div>
+            <button class="btn btn-primary" id="kb-add-btn"><i data-icon="plus"></i>Bazaga qo'shish</button>
+          </div>
+        </div>
+        <div class="card mb">
+          <h3><i data-icon="search"></i>Bazadan qidirib ko'rish</h3>
+          <div class="row">
+            <input class="input grow" id="kb-search" placeholder="Masalan: yetkazib berish narxi qancha?">
+            <button class="btn" id="kb-search-btn">Qidirish</button>
+          </div>
+          <div class="list mt" id="kb-search-results"></div>
+        </div>
+        <div class="card">
+          <h3><i data-icon="book"></i>Hujjatlar <span class="badge" id="kb-count"></span></h3>
+          <div class="list" id="kb-list"></div>
+        </div>
+      </section>
+
+      <!-- QUESTIONS -->
+      <section class="page" id="page-questions">
+        <div class="page-head">
+          <div>
+            <h2>Javobsiz savollar</h2>
+            <p>Agent bazadan javob topa olmagan savollar. Siz yozgan javob mijozga yuboriladi va bazaga qo'shiladi</p>
+          </div>
+          <div class="tabs">
+            <button class="tab active" data-q-tab="open">Ochiq</button>
+            <button class="tab" data-q-tab="">Barchasi</button>
+          </div>
+        </div>
+        <div class="grid" id="questions-list"></div>
+      </section>
+
+      <!-- APPROVALS -->
+      <section class="page" id="page-approvals">
+        <div class="page-head">
+          <div>
+            <h2>Tasdiqlar</h2>
+            <p>Postlar, javoblar va <b>pul bilan bog'liq har qanday amal</b> faqat siz tasdiqlaganingizdan keyin bajariladi</p>
+          </div>
+          <div class="tabs">
+            <button class="tab active" data-a-tab="pending">Kutilmoqda</button>
+            <button class="tab" data-a-tab="">Tarix</button>
+          </div>
+        </div>
+        <div class="grid" id="approvals-list"></div>
+      </section>
+
+      <!-- CONTENT -->
+      <section class="page" id="page-content">
+        <div class="page-head">
+          <div>
+            <h2>Kontent</h2>
+            <p>Agent post tayyorlaydi, siz tasdiqlaysiz, keyin u kanalga joylanadi</p>
+          </div>
+        </div>
+        <div class="grid grid-main">
+          <div class="card">
+            <h3><i data-icon="megaphone"></i>Postlar</h3>
+            <div class="list" id="posts-list"></div>
+          </div>
+          <div class="card" style="align-self:start">
+            <h3><i data-icon="sparkles"></i>Yangi post</h3>
+            <div class="field">
+              <label>Kanal</label>
+              <select class="input" id="post-channel"></select>
+            </div>
+            <div class="field">
+              <label>Mavzu</label>
+              <input class="input" id="post-topic" placeholder="Bo'sh qoldirsangiz, agent o'zi tanlaydi">
+            </div>
+            <div class="field">
+              <label>Qo'shimcha ko'rsatma</label>
+              <input class="input" id="post-instr" placeholder="Masalan: qisqaroq, chegirma haqida urg'u ber">
+            </div>
+            <div class="field">
+              <label>Joylash vaqti</label>
+              <input class="input" type="datetime-local" id="post-time">
+              <span class="hint">Bo'sh bo'lsa, tasdiqlangan zahoti joylanadi</span>
+            </div>
+            <button class="btn btn-primary" style="width:100%" id="post-gen-btn"><i data-icon="sparkles"></i>AI bilan yozish</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIDEOS -->
+      <section class="page" id="page-videos">
+        <div class="page-head">
+          <div>
+            <h2>Video fabrikasi</h2>
+            <p>Agent ssenariy yozadi, ovoz beradi va montaj qiladi. Siz tasdiqlagach YouTube va Instagram'ga joylanadi</p>
+          </div>
+          <button class="btn" onclick="App.loadVideos()"><i data-icon="refresh"></i>Yangilash</button>
+        </div>
+        <div class="grid grid-main">
+          <div class="card">
+            <h3><i data-icon="film"></i>Tayyor videolar</h3>
+            <div class="list" id="videos-list"></div>
+          </div>
+          <div class="card" style="align-self:start">
+            <h3><i data-icon="sparkles"></i>Yangi video yasash</h3>
+            <div class="field">
+              <label>Mavzu</label>
+              <input class="input" id="vid-topic" placeholder="Bo'sh bo'lsa, bilim bazasidan o'zi tanlaydi">
+            </div>
+            <div class="grid grid-2" style="grid-template-columns:1fr 1fr;gap:10px">
+              <div class="field">
+                <label>Video uslubi</label>
+                <select class="input" id="vid-style">
+                  <option value="auto">✨ Avto (vaziyatga qarab)</option>
+                  <option value="stock">🎥 Stok video + ovoz</option>
+                  <option value="kinetic">🎨 Kinetik slayd + ovoz</option>
+                  <option value="ai_veo">🤖 AI video (Veo)</option>
+                  <option value="avatar">🧑‍💼 AI avatar (HeyGen)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Format</label>
+                <select class="input" id="vid-ratio">
+                  <option value="9:16">📱 9:16 (Shorts / Reels)</option>
+                  <option value="16:9">🖥 16:9 (YouTube)</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label>Til</label>
+              <select class="input" id="vid-lang">
+                <option value="uz">O'zbekcha</option>
+                <option value="ru">Русский</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Qayerga joylansin (tasdiqdan keyin)</label>
+              <div class="row">
+                <label class="badge" style="cursor:pointer"><input type="checkbox" class="vid-target" value="youtube" checked> 📺 YouTube</label>
+                <label class="badge" style="cursor:pointer"><input type="checkbox" class="vid-target" value="instagram" checked> 📸 Instagram</label>
+                <label class="badge" style="cursor:pointer"><input type="checkbox" class="vid-target" value="telegram"> ✈️ Telegram</label>
+              </div>
+            </div>
+            <div class="field">
+              <label>Qo'shimcha ko'rsatma</label>
+              <input class="input" id="vid-instr" placeholder="Masalan: 30 soniyalik qisqa maslahat">
+            </div>
+            <button class="btn btn-primary" style="width:100%" id="vid-gen-btn"><i data-icon="film"></i>Video yaratish</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ANALYTICS -->
+      <section class="page" id="page-analytics">
+        <div class="page-head">
+          <div>
+            <h2>Analitika va sifat nazorati</h2>
+            <p>Reyting, izohlar kayfiyati, obunachilar fikri va agentning o'z-o'zini to'g'irlashi</p>
+          </div>
+          <button class="btn btn-primary" id="an-refresh-btn"><i data-icon="sparkles"></i>Hozir tahlil qilish</button>
+        </div>
+        <div class="grid grid-4 mb" id="an-stats"></div>
+        <div class="card mb" id="an-guidance-card">
+          <h3><i data-icon="zap"></i>O'z-o'zini to'g'irlash (avto-strategiya)</h3>
+          <div id="an-guidance" class="quote" style="margin:0;border-left-color:var(--mint)">Hali tahlil o'tkazilmagan</div>
+        </div>
+        <div class="grid grid-2">
+          <div class="card">
+            <h3><i data-icon="chat"></i>So'nggi izohlar va kayfiyat (YouTube / Instagram)</h3>
+            <div class="list" id="an-comments"></div>
+          </div>
+          <div class="card">
+            <h3><i data-icon="activity"></i>Sifat auditi va tuzatishlar tarixi</h3>
+            <div class="list" id="an-insights"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TARGETOLOG (ADS) -->
+      <section class="page" id="page-ads">
+        <div class="page-head">
+          <div>
+            <h2>Targetolog — Reklama boshqaruvi</h2>
+            <p>AI reklama strategiyasi va auditoriya tuzadi. <b>Pul sarflanadigan har bir amal sizdan ruxsat so'raydi</b></p>
+          </div>
+          <button class="btn" onclick="App.loadAds()"><i data-icon="refresh"></i>Yangilash</button>
+        </div>
+        <div class="money-alert mb">🛡 Xavfsizlik kafolati: Reklama ishga tushirish, byudjet o'zgartirish yoki to'xtatilgan kampaniyani qayta yoqish HECH QACHON sizning tasdig'ingizsiz bajarilmaydi.</div>
+        <div class="grid grid-main">
+          <div class="card">
+            <h3><i data-icon="target"></i>Kampaniyalar</h3>
+            <div class="list" id="ads-list"></div>
+          </div>
+          <div class="card" style="align-self:start">
+            <h3><i data-icon="sparkles"></i>Yangi reklama taklifi</h3>
+            <div class="field">
+              <label>Platforma</label>
+              <select class="input" id="ad-platform">
+                <option value="meta">📘 Meta Ads (Instagram + Facebook)</option>
+                <option value="google">🔍 Google Ads (Search / YouTube)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Reklama maqsadi</label>
+              <textarea class="input" rows="3" id="ad-goal" placeholder="Masalan: Toshkentdagi 20-40 yoshli mijozlardan Instagram orqali yangi buyurtmalar jalb qilish"></textarea>
+            </div>
+            <div class="grid grid-2" style="grid-template-columns:1fr 1fr;gap:10px">
+              <div class="field"><label>Kunlik byudjet</label><input class="input" type="number" min="1" step="1" id="ad-daily" placeholder="Masalan: 10"></div>
+              <div class="field"><label>Jami byudjet</label><input class="input" type="number" min="1" step="1" id="ad-total" placeholder="Masalan: 70"></div>
+            </div>
+            <div class="field">
+              <label>Valyuta</label>
+              <select class="input" id="ad-currency">
+                <option value="USD">USD ($)</option>
+                <option value="UZS">UZS (so'm)</option>
+              </select>
+            </div>
+            <div class="field"><label>Qo'shimcha izoh</label><input class="input" id="ad-notes" placeholder="Ixtiyoriy: chegirma yoki maxsus taklif"></div>
+            <button class="btn btn-primary" style="width:100%" id="ad-propose-btn"><i data-icon="target"></i>Strategiya tuzish va tasdiqqa yuborish</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PLAYGROUND -->
+      <section class="page" id="page-playground">
+        <div class="page-head">
+          <div>
+            <h2>Sinov maydoni</h2>
+            <p>Agent mijozlarga qanday javob berishini xavfsiz sinab ko'ring (hech kimga yuborilmaydi)</p>
+          </div>
+          <div class="row">
+            <select class="input" id="pg-context" style="width:auto">
+              <option value="private">👤 Shaxsiy chat</option>
+              <option value="group">👥 Guruh</option>
+              <option value="comment">💬 Kanal izohi</option>
+            </select>
+            <button class="btn" id="pg-clear"><i data-icon="trash"></i>Tozalash</button>
+          </div>
+        </div>
+        <div class="card chat-box">
+          <div class="chat-msgs" id="pg-msgs">
+            <div class="empty" id="pg-empty"><div class="big">💬</div>Mijoz sifatida biror narsa yozing.<br>Masalan: «Assalomu alaykum, narxlaringiz qanday?» yoki «Привет, сколько стоит доставка?»</div>
+          </div>
+          <div class="chat-input">
+            <input class="input grow" id="pg-input" placeholder="Xabar yozing…" autocomplete="off">
+            <button class="btn btn-primary" id="pg-send"><i data-icon="send"></i></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACTIVITY -->
+      <section class="page" id="page-activity">
+        <div class="page-head">
+          <div><h2>Faollik jurnali</h2><p>Agent bajargan barcha amallar</p></div>
+          <button class="btn" onclick="App.loadActivity()"><i data-icon="refresh"></i>Yangilash</button>
+        </div>
+        <div class="card"><div class="feed" id="activity-feed" style="max-height:none"></div></div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="page" id="page-settings">
+        <div class="page-head">
+          <div><h2>Sozlamalar</h2><p>Agent kim nomidan yozishi, uslubi va qanday ishlashi</p></div>
+          <button class="btn btn-primary" id="settings-save"><i data-icon="save"></i>Saqlash</button>
+        </div>
+        <div class="grid grid-2">
+          <div class="card">
+            <h3><i data-icon="user"></i>Shaxsiyat (persona)</h3>
+            <div class="field"><label>Kim nomidan yozadi</label><input class="input" data-s="persona.owner_name"></div>
+            <div class="field"><label>Kim ekansiz / nima bilan shug'ullanasiz</label><input class="input" data-s="persona.role"></div>
+            <div class="field"><label>Yozish uslubi</label><textarea class="input" rows="3" data-s="persona.style"></textarea></div>
+            <div class="field"><label>Asosiy til</label>
+              <select class="input" data-s="persona.default_language">
+                <option value="uz">O'zbekcha</option><option value="ru">Русский</option><option value="en">English</option>
+              </select>
+              <span class="hint">Mijoz qaysi tilda yozsa, agent o'sha tilda javob beradi</span>
+            </div>
+            <div class="field"><label>Qo'shimcha ko'rsatmalar</label><textarea class="input" rows="3" data-s="persona.extra_instructions" placeholder="Masalan: har doim ism bilan murojaat qil"></textarea></div>
+            <div class="check-row">
+              <div><b>Halollik</b><span>Kimdir jiddiy «botmisan?» deb so'rasa, agent buni inkor qilmaydi</span></div>
+              <label class="toggle"><input type="checkbox" data-s="persona.disclose_ai_if_asked"><span></span></label>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3><i data-icon="sliders"></i>Xatti-harakat</h3>
+            <div class="check-row">
+              <div><b>Avtomatik javob</b><span>Ruxsat berilgan chatlarga javob berish</span></div>
+              <label class="toggle"><input type="checkbox" data-s="behavior.auto_reply_enabled"><span></span></label>
+            </div>
+            <div class="check-row">
+              <div><b>Guruhlarda faqat murojaat qilinganda</b><span>Mention yoki reply bo'lsa javob beradi</span></div>
+              <label class="toggle"><input type="checkbox" data-s="behavior.reply_in_groups_only_when_mentioned"><span></span></label>
+            </div>
+            <div class="check-row">
+              <div><b>Admin javobini moslash</b><span>Javobingizni mijoz tiliga va uslubiga moslab yuboradi</span></div>
+              <label class="toggle"><input type="checkbox" data-s="behavior.polish_admin_answers"><span></span></label>
+            </div>
+            <div class="grid grid-2 mt" style="grid-template-columns:1fr 1fr;gap:12px">
+              <div class="field"><label>Minimal ishonch (0–1)</label><input class="input" type="number" step="0.05" min="0" max="1" data-s="behavior.min_confidence"></div>
+              <div class="field"><label>Siz yozsangiz jim turish (daq.)</label><input class="input" type="number" min="0" data-s="behavior.human_takeover_minutes"></div>
+              <div class="field"><label>Javob kechikishi min (s)</label><input class="input" type="number" min="0" data-s="behavior.reply_delay_min_sec"></div>
+              <div class="field"><label>Javob kechikishi max (s)</label><input class="input" type="number" min="0" data-s="behavior.reply_delay_max_sec"></div>
+              <div class="field"><label>Daqiqasiga maks. javob</label><input class="input" type="number" min="1" data-s="behavior.max_replies_per_minute"></div>
+              <div class="field"><label>Ish vaqti</label><input class="input" placeholder="08:00-23:00" data-s="behavior.working_hours"></div>
+            </div>
+            <div class="field"><label>Guruhdagi kalit so'zlar (vergul bilan)</label><input class="input" data-s="behavior.group_trigger_keywords" data-type="list" placeholder="narx, buyurtma, admin"></div>
+          </div>
+
+          <div class="card">
+            <h3><i data-icon="megaphone"></i>Kontent</h3>
+            <div class="field"><label>Har kuni avtomatik post qoralamalari soni</label><input class="input" type="number" min="0" max="10" data-s="content.daily_drafts"><span class="hint">0 = o'chiq. Qoralamalar baribir sizning tasdig'ingizdan o'tadi</span></div>
+            <div class="field"><label>Qoralama tayyorlash vaqti</label><input class="input" type="time" data-s="content.draft_time"></div>
+            <div class="field"><label>Asosiy kanal</label><select class="input" data-s="content.default_channel_id" data-type="int" id="settings-channel"></select></div>
+          </div>
+
+          <div class="card">
+            <h3><i data-icon="chart"></i>Hisobotlar va monitoring</h3>
+            <div class="field"><label>Kunlik hisobot vaqti (admin-botga)</label><input class="input" type="time" data-s="reports.daily_report_time"></div>
+            <div class="grid grid-2" style="grid-template-columns:1fr 1fr;gap:12px">
+              <div class="field"><label>Izohlarni tekshirish (daq.)</label><input class="input" type="number" min="1" data-s="social.poll_comments_minutes"></div>
+              <div class="field"><label>Sifat tahlili oralig'i (daq.)</label><input class="input" type="number" min="5" data-s="social.analytics_interval_minutes"></div>
+            </div>
+            <div class="check-row">
+              <div><b>Izohlarga avto-javob (YouTube/Instagram)</b><span>Foydalanuvchi tiliga moslab javob beradi</span></div>
+              <label class="toggle"><input type="checkbox" data-s="social.auto_reply_comments"><span></span></label>
+            </div>
+            <div class="check-row">
+              <div><b>Spam izohlarni avtomatik yashirish</b><span>Haqorat va spamni moderatsiya qiladi</span></div>
+              <label class="toggle"><input type="checkbox" data-s="social.auto_hide_spam"><span></span></label>
+            </div>
+            <div class="check-row">
+              <div><b>O'z-o'zini to'g'irlash</b><span>Fikr-mulohazaga qarab kontent sifatini avtomatik yaxshilaydi</span></div>
+              <label class="toggle"><input type="checkbox" data-s="social.auto_self_correct"><span></span></label>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3><i data-icon="film"></i>Video va Targetolog</h3>
+            <div class="grid grid-2" style="grid-template-columns:1fr 1fr;gap:12px">
+              <div class="field"><label>Standart video uslubi</label>
+                <select class="input" data-s="video.default_style">
+                  <option value="auto">Avto</option><option value="stock">Stok</option><option value="kinetic">Kinetik</option><option value="ai_veo">AI Veo</option><option value="avatar">Avatar</option>
+                </select>
+              </div>
+              <div class="field"><label>O'zbek ovozi (TTS)</label>
+                <select class="input" data-s="video.voice_uz">
+                  <option value="uz-UZ-MadinaNeural">Madina (ayol)</option><option value="uz-UZ-SardorNeural">Sardor (erkak)</option>
+                </select>
+              </div>
+            </div>
+            <div class="field"><label>Targetolog tavsiya qiladigan maks. kunlik byudjet</label><input class="input" type="number" min="1" data-s="ads.max_suggested_daily_budget"></div>
+            <div class="check-row">
+              <div><b>Zararli reklamani avto-to'xtatish</b><span>CTR juda past bo'lsa, pulni tejash uchun to'xtatadi</span></div>
+              <label class="toggle"><input type="checkbox" data-s="ads.pause_underperforming_auto"><span></span></label>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-bg" id="modal">
+    <div class="card modal" id="modal-body"></div>
+  </div>
+  <div class="toasts" id="toasts"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

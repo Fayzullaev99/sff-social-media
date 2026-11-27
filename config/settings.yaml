@@ -1,0 +1,63 @@
+# ============================================================
+#  Social Agent — standart sozlamalar
+#  Bu qiymatlar dashboard -> "Sozlamalar" orqali o'zgartirilishi mumkin
+#  (dashboarddagi o'zgarishlar bazada saqlanadi va shu fayldan ustun turadi)
+# ============================================================
+
+persona:
+  owner_name: "Admin"                 # Agent kimning nomidan yozadi
+  role: "Kompaniya/loyiha vakili"     # Qisqa tavsif: kim ekansiz, nima bilan shug'ullanasiz
+  style: "Samimiy, qisqa va aniq. Inson kabi tabiiy yoz. Emojilarni me'yorida ishlat."
+  default_language: "uz"
+  # Agar kimdir jiddiy "sen botmisan?" deb so'rasa, yolg'on gapirmaydi
+  disclose_ai_if_asked: true
+  extra_instructions: ""
+
+behavior:
+  auto_reply_enabled: true
+  min_confidence: 0.6                 # Bundan past ishonchda savol adminga yuboriladi
+  debounce_sec: 4                     # Ketma-ket xabarlarni yig'ib, bitta javob berish
+  reply_delay_min_sec: 2
+  reply_delay_max_sec: 8
+  typing_chars_per_sec: 14            # "yozmoqda..." davomiyligi
+  max_typing_sec: 15
+  max_replies_per_minute: 20          # Global limit (akkaunt xavfsizligi uchun)
+  per_chat_cooldown_sec: 3
+  human_takeover_minutes: 10          # Siz o'zingiz yozsangiz, agent shu vaqt jim turadi
+  reply_in_groups_only_when_mentioned: true
+  group_trigger_keywords: []
+  history_messages: 20
+  working_hours: ""                   # Masalan "08:00-23:00" (bo'sh = 24/7)
+  polish_admin_answers: true          # Admin javobini foydalanuvchi tiliga moslab yuborish
+
+content:
+  require_approval: true              # Post/video faqat tasdiqdan keyin
+  daily_drafts: 0                     # Har kuni nechta post qoralamasi tayyorlansin (0 = o'chiq)
+  draft_time: "10:00"
+  default_channel_id: null
+
+reports:
+  daily_report_time: "21:00"
+
+video:
+  default_style: "auto"               # auto|stock|kinetic|ai_veo|avatar
+  default_aspect_ratio: "9:16"        # 9:16 (Shorts/Reels) yoki 16:9 (YouTube)
+  voice_uz: "uz-UZ-MadinaNeural"      # yoki uz-UZ-SardorNeural
+  voice_ru: "ru-RU-SvetlanaNeural"
+  voice_en: "en-US-JennyNeural"
+  auto_publish_targets: ["youtube", "instagram"]
+  require_approval: true
+
+social:
+  poll_comments_minutes: 10           # YouTube/Instagram izohlarini tekshirish oralig'i
+  auto_reply_comments: true
+  auto_hide_spam: true
+  analytics_interval_minutes: 60      # Rating, izoh va sifat tahlili oralig'i
+  auto_self_correct: true             # Past natijali kontent strategiyasini avtomatik to'g'irlash
+
+ads:
+  default_currency: "USD"
+  max_suggested_daily_budget: 20.0
+  auto_propose_campaigns: false       # True bo'lsa haftalik reklama taklifi tayyorlaydi (TASDIQ MAJBURIY)
+  pause_underperforming_auto: true    # Zararli reklamani to'xtatish (pul tejash - xavfsiz)
+

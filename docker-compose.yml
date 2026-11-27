@@ -1,0 +1,14 @@
+services:
+  social-agent:
+    build: .
+    container_name: social-agent
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DASHBOARD_HOST: 0.0.0.0
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config
